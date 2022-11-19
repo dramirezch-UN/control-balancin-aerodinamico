@@ -11,4 +11,11 @@ I=1.15e-4;
 gamma=0.384540871;
 beta=gamma*2*I;
 
+load('tiempo_angulo_irl.mat');
 exponencial_irl=105.2254188*exp(-0.384540871*tiempo_irl);
+
+s = tf('s');
+G=(dm/I)/(s^2+s*beta/I+g*(-dc*mc+dm*mm+db*mb)*cosd(30)/I);
+polo_real=4.8036; %obtenido de pole(tf_vhs)
+tf_polo_real=K/((1/polo_real)*s+1);
+TF=(360/(2*pi))*G*tf_polo_real;

@@ -1,3 +1,4 @@
+load('tiempo_angulo_irl.mat');
 sim('simulacion_validacion.slx',12);
 angulo_simulacion=ans.simout.data+angulo_irl(end);
 plot( ...
