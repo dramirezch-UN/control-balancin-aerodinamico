@@ -18,7 +18,7 @@ G=(K*dm/I)/(s^2+(beta/I)*s-(((mc*dc-mm*dm-mb*db)/I)*cosd(thop)));
 %}
 
 %% Parametros Nuestros
-K=0.001;
+K=0.0008776;
 mc=2.07/1000;
 mb=7.38/1000;
 mm=(3.2+1.28)/1000;
