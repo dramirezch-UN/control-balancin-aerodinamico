@@ -1,7 +1,7 @@
 /*
-Sweep PWM from 0 to the value where the arm goes over 90 and print the angle for
-each value of PWM. Values are printed in a CSV-ready PWM,angle format.
-This is used for calculating the value K of the motor.
+Sweep PWM de 0 a 100 (cuidado, hay cierto valor de PWM cerca a 70 en donde
+empezará a dar vueltas.). Los valores se imprimen en formato listo para CSV.
+Esto se hace para calcular el valor K del motor.
 */
 
 // Puente H
@@ -20,7 +20,7 @@ void setup() {
   pinMode(In2, OUTPUT);
   // get data
   PWM=0;
-  while (PWM<60) {
+  while (PWM<100) {
     analogWrite(In1, PWM*255/100);
     Serial.print(PWM);
     Serial.print(",");
@@ -33,7 +33,8 @@ void setup() {
 }
 
 void loop() {
-  // after getting the data, it goes back to the default PWM value of 30
+  PWM=30;
+  // cuando acabe el sweep se vuelve a un PWM de 30
   digitalWrite(In2, LOW);
-  analogWrite(In1, 30*255/100);
+  analogWrite(In1, PWM*255/100);
 }
