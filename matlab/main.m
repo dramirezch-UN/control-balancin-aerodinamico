@@ -1,2 +1,5 @@
+clear;
 parametros;
-bode;
+%plot_validacion;
+%bode;
+verificar_sistema;
