@@ -19,3 +19,20 @@ G=(dm/I)/(s^2+s*beta/I+g*(-dc*mc+dm*mm+db*mb)*cosd(30)/I);
 polo_real=4.8036; %obtenido de pole(tf_vhs)
 tf_polo_real=K/((1/polo_real)*s+1);
 TF=(360/(2*pi))*G*tf_polo_real;
+
+sim_sistema_in=30;
+referencia_TF=30;
+referencia_control=30;
+
+% valores obtenidos con PID tuner en simulacion_control.slx
+% es el PID mas rapido y agresivo que permite
+KP=0.146729418940118;
+KI=0.244549031566864;
+KD=0;
+N=100;
+PID_tf=pid(KP,KI,KD);
+
+% funcion de transferencia de la planta*PID usada para diseñar la red
+GP=TF*PID_tf;
+
+
