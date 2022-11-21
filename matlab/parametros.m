@@ -32,7 +32,10 @@ KD=0;
 N=100;
 PID_tf=pid(KP,KI,KD);
 
-% funcion de transferencia de la planta*PID usada para diseñar la red
+% para diseñar la red
+tf('s');
 GP=TF*PID_tf;
-
-
+%ess_specified=0.02;%Steady-state error for a ramp input. GP ya controla
+%steps
+PMspecified=45;%phase margin. el "default"
+wx_specified=82;%Gain crossover frequency
