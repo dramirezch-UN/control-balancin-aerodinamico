@@ -11,25 +11,16 @@ bool up = true;
 int i = 0;
 
 long previousMillis = 0;
-double directCmd=0.3;
-int Uunits=1;
+double directCmd=30;
+int Uunits=100;
 int pwmMax=255;
 unsigned int pwmDuty = 0;
 
-//float Kp=0.015;
-//float Ki=0.012;
-//float Kd=0.002;
-
-//Las epicas
-/*float Kp = 0.0009;
-float Ki = 0.3;
-float Kd = 0.00323;*/
-
-float Kp=0.4;
-float Ki=0.65;
-float Kd=0.018;
-int N=100;
-double Ref= 90;
+float Kp=0.537343719819551;
+float Ki=0.121465296518685;
+float Kd=-1.73291836724239;
+int N=0.177064533264986;
+double Ref= 30;
 
 //Red de adelanto
 double a=2.377;
@@ -72,18 +63,13 @@ double CmdPIpp=0;
 
 void setup()
 {
- //Configuración de los pines como salidas
- //pinMode (IN1, OUTPUT);
  pinMode (IN2, OUTPUT);
  Serial.begin(115200);
 }
-void loop()
-{
-  //Salida para que el motor gire en un sentido
-  //digitalWrite (IN1, HIGH);
+
+void loop(){
   digitalWrite (IN2, LOW);
   controlPI();
-  //RefChange();
 }
 
 void controlPI(){
@@ -97,10 +83,9 @@ void controlPI(){
     pwmDuty = int((CmdLim/Uunits)*pwmMax);
     analogWrite(IN1,pwmDuty);
 
-    if (currentMillis >= 5000) {
-     
-      E = (Ref - ang)*PI/180;
-      E2= (Ref - ang);
+    if (currentMillis >= 5000) {     
+      E= (Ref - ang); // error en grados
+      
       //CmdPI = Kp*(E - Ep) + (Ki*Ts/2)*(E + Ep) + Up;
       //Uin=(a*E+b*Ep)*0.0001+Uinp;
       //CmdPI=(a*E+b*Ep+c*Ep2)*0.00001+a1*Up+a2*Up2;
@@ -110,15 +95,20 @@ void controlPI(){
       double CmdD= Kd*N*(E-Ep)+CmdDp*(1-(N*Ts*1e-3));
      
       CmdPI= CmdP+CmdI+CmdD;
-      //Red de adelanto
+      
+//      Si se quiere usar solo PID (sin red) descomentar la siguiente linea
+//      CmdC=CmdPI;
+
+//      Red de adelanto
       CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
-      //Red de adelanto atraso
-      //CmdC=(a1*CmdPI+b1*CmdPIp+c1*CmdPIpp -e1*Up-f1*Upp)/d1;
-      //Red de atraso
-      //CmdC=(a2*CmdPI+b2*CmdPIp-d2*Up)/c2;
-      //Uinp=Uin;
-      //Ep2=Ep;
-      //Up2=Up;
+//      Red de adelanto atraso
+//      CmdC=(a1*CmdPI+b1*CmdPIp+c1*CmdPIpp -e1*Up-f1*Upp)/d1;
+//      Red de atraso
+//      CmdC=(a2*CmdPI+b2*CmdPIp-d2*Up)/c2;
+//      Uinp=Uin;
+//      Ep2=Ep;
+//      Up2=Up;
+
       CmdIp=CmdI;
       CmdDp=CmdD;
       CmdPIpp = CmdPIp;
@@ -158,18 +148,4 @@ void controlPI(){
     Serial.print("pwmDuty:[8bit]");
     Serial.println(pwmDuty);
    }
-}
-
-void RefChange(){
- unsigned long currentMillis = millis();
- if (currentMillis >= 5000 && currentMillis-previousMillis2 >= 20000) {
-    previousMillis2 = currentMillis; // refresh the last time you RUN
-    if (up){
-      Ref = 90;
-      up = false;
-    } else {
-      Ref = 120;
-      up = true;
-    }
- }
 }
