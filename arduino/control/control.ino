@@ -12,7 +12,7 @@ int i = 0;
 
 long previousMillis = 0;
 double directCmd=0.5;
-int Uunits=4;
+int Uunits=1;
 int pwmMax=255;
 unsigned int pwmDuty = 0;
 
@@ -93,8 +93,8 @@ void controlPI(){
     sensorValue = analogRead(sensorPin);
     ang=((float(sensorValue)*360/1023)-130);
     double Cmd = directCmd+CmdC;  
-    double CmdLim = min(max(Cmd, 0), 1); // Saturated Control Output
-    pwmDuty = int((CmdLim/1)*pwmMax);
+    double CmdLim = min(max(Cmd, 0), Uunits); // Saturated Control Output
+    pwmDuty = int((CmdLim/Uunits)*pwmMax);
     analogWrite(IN1,pwmDuty);
 
     if (currentMillis >= 5000) {
