@@ -1,89 +1,163 @@
-/*
-Codigo del control
-*/
+//Definición salidas para el motor
 
-// pins
-// Puente H
-int outputPwmPin = 6;
-int In2 = 4;
-// Encoder
-float sensorPin = A0;
+int IN1 = 9;    // In3 (L298N) conectada al pin 9, este es el del PWM
+int IN2 = 6;    // In4 (L298N) conectada al pin 6
+int sensorPin = A0;    // select the input pin for the potentiometer
+int sensorValue = 0;  // variable to store the value coming from the sensor
+double ang=0;
 
-// Execution Time Control
-long previousMillis = 0;  // For main loop function
-long Ts = 10; // Sample time in ms
+long previousMillis2 = 0; // For auxiliary functions (squarewaves)
+bool up = true;
+int i = 0;
 
-// control system variables
-
-// ----- Reference -----
-double Ref = 80;
-// ---------------------
-
-double directCmd = 30.0;
-double E[5] = {0, 0, 0, 0, 0};
-double U[5]= {0, 0, 0, 0, 0};
-
-double Uunits = 100;
-
-double sensorValue = 0;
-double ang = 0;
-double CmdPI=0;
+long previousMillis = 0;
+double directCmd=0.5;
+int Uunits=4;
+int pwmMax=255;
 unsigned int pwmDuty = 0;
-double pwmMax = 255;
 
-void control(){
+//float Kp=0.015;
+//float Ki=0.012;
+//float Kd=0.002;
+
+//Las epicas
+/*float Kp = 0.0009;
+float Ki = 0.3;
+float Kd = 0.00323;*/
+
+float Kp=0.4;
+float Ki=0.65;
+float Kd=0.018;
+
+//Red de adelanto
+double a=2.377;
+double b=-2.326;
+double c=1;
+double d=-0.9485;
+//Red de adelanto-atraso
+double a1 = 2.13;
+double b1 = -4.209;
+double c1 = 2.08;
+double d1 = 1;
+double e1 = -1.947;
+double f1 = 0.9471;
+//Red de atraso
+double a2=0.2908;
+double b2=-0.2901;
+double c2=1;
+double d2=-0.9993;
+
+//double c1=1.00;
+//double d1=-0.972268441486412;
+double Ref= 90;
+double Uin=0;
+double Uinp=0;
+double CmdPI=0.0;
+double Cmd=0.0;
+int N=100;
+long Ts=2.5;
+double E2=0;
+double E=0;
+double Ep=0;
+double Ep2=0;
+double Up=0;
+double Upp = 0;
+double Up2=0;
+double CmdIp=0;
+double CmdDp=0;
+double CmdC=0;    //señal Controlador con red incluida
+double CmdCp=0;   //señal Controlador con red incluida
+double CmdPIp=0;
+double CmdPIpp=0;
+
+void setup()
+{
+ //Configuración de los pines como salidas
+ //pinMode (IN1, OUTPUT);
+ pinMode (IN2, OUTPUT);
+ Serial.begin(115200);
+}
+void loop()
+{
+  //Salida para que el motor gire en un sentido
+  //digitalWrite (IN1, HIGH);
+  digitalWrite (IN2, LOW);
+  controlPI();
+  //RefChange();
+}
+
+void controlPI(){
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= Ts) {
+  if (currentMillis - previousMillis >= Ts ) {
     previousMillis = currentMillis;
     sensorValue = analogRead(sensorPin);
-    ang=(float(sensorValue)*360/1023)-130;
-    double Cmd = directCmd+CmdPI;
-    double CmdLim = min(max(Cmd,0),100);
-    pwmDuty = int((CmdLim/Uunits)*pwmMax);
-    analogWrite(outputPwmPin, pwmDuty);
+    ang=((float(sensorValue)*360/1023)-130);
+    double Cmd = directCmd+CmdC;  
+    double CmdLim = min(max(Cmd, 0), 1); // Saturated Control Output
+    pwmDuty = int((CmdLim/1)*pwmMax);
+    analogWrite(IN1,pwmDuty);
 
-    E[4] = E[3];
-    E[3] = E[2];
-    E[2] = E[1];
-    E[1] = E[0];
-    E[0] = Ref - ang;
-
-    U[4] = U[3];
-    U[3] = U[2];
-    U[2] = U[1];
-    U[1] = U[0];
-    U[0] = 1.291*E[0] - 3.595*E[1] + 3.133*E[2] - 0.633*E[3] - 0.1954*E[4] - (- 2.477*U[1] + 1.95*U[2] - 0.3935*U[3] - 0.07914*U[4]);
-    //U[0] = 10.79*E[0] - 30.22*E[1] + 26.49*E[2] - 5.401*E[3] - 1.659*E[4] - (- 2.477*U[1] + 1.95*U[2] - 0.3935*U[3] - 0.07914*U[4]);
-
-
-    CmdPI = U[0];
-
-    Serial.print("E:");
-    Serial.print(E[0]);
-    Serial.print(", ");
-    Serial.print("U:");
-    Serial.print(CmdPI);
-    Serial.print(", ");
-    Serial.print("PWM:");
-    Serial.print(CmdLim);
-    Serial.print(", ");
-    Serial.print("Ref:");
-    Serial.print(Ref);
-    Serial.print(", ");
-    Serial.print("ang:");
-    Serial.println(ang);
-  }
+    if (currentMillis >= 5000) {
+     
+      E = (Ref - ang)*PI/180;
+      E2= (Ref - ang);
+      //CmdPI = Kp*(E - Ep) + (Ki*Ts/2)*(E + Ep) + Up;
+      //Uin=(a*E+b*Ep)*0.0001+Uinp;
+      //CmdPI=(a*E+b*Ep+c*Ep2)*0.00001+a1*Up+a2*Up2;
+      //CmdPI=(c*Uin+d*Uinp-d1*Up)/c1;
+      double CmdP=Kp*E;
+      double CmdI= (Ki*(Ts*1e-3)*Ep)+CmdIp;
+      double CmdD= Kd*N*(E-Ep)+CmdDp*(1-(N*Ts*1e-3));
+     
+      CmdPI= CmdP+CmdI+CmdD;
+      //Red de adelanto
+      CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
+      //Red de adelanto atraso
+      //CmdC=(a1*CmdPI+b1*CmdPIp+c1*CmdPIpp -e1*Up-f1*Upp)/d1;
+      //Red de atraso
+      //CmdC=(a2*CmdPI+b2*CmdPIp-d2*Up)/c2;
+      //Uinp=Uin;
+      //Ep2=Ep;
+      //Up2=Up;
+      CmdIp=CmdI;
+      CmdDp=CmdD;
+      CmdPIpp = CmdPIp;
+      CmdPIp=CmdPI;
+      Ep = E;
+      Upp = Up;
+      Up = CmdC;
+     
+    }
+    //Serial.print("Time:");
+    //Serial.print(currentMillis);
+    //Serial.print(",");
+    //Serial.print("Error:");
+    //Serial.print(E2);
+    //Serial.print(",");
+    //Serial.print("U:");
+    //Serial.print(CmdPI);
+    //Serial.print(",");
+    //Serial.print("Ref:");
+    Serial.print(currentMillis/1000.0,DEC);
+    Serial.print(",");
+    Serial.print(Ref,DEC);
+    Serial.print(",");
+    //Serial.print("angle:");
+    Serial.println(ang,DEC);  
+   
+   }
 }
 
-void setup() {
-  Serial.begin(2000000);
-  // Puente H
-  pinMode(outputPwmPin, OUTPUT);
-  pinMode(In2, OUTPUT);
-  analogWrite(outputPwmPin, pwmDuty);
-}
-
-void loop() {
-  digitalWrite(In2, LOW);
-  control();
+void RefChange(){
+ unsigned long currentMillis = millis();
+ if (currentMillis >= 5000 && currentMillis-previousMillis2 >= 20000) {
+    previousMillis2 = currentMillis; // refresh the last time you RUN
+    if (up){
+      Ref = 90;
+      up = false;
+    } else {
+      Ref = 120;
+      up = true;
+    }
+ }
 }
