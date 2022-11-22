@@ -22,7 +22,7 @@ void setup() {
 void loop() {
   // write PWM for bridge H
   digitalWrite(In2, LOW);
-  analogWrite(In1, (PWM*255/100)+5);
+  analogWrite(In1, PWM*255/100);
   // read angle from encoder
   sensor = analogRead(sensorPin);
   sensor = map(sensor, 0, 1023, 0, 360);
