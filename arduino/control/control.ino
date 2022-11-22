@@ -131,32 +131,32 @@ void controlPI(){
     Serial.print("Time[ms]:");
     Serial.print(currentMillis);
     Serial.print(", ");
-    Serial.print("ref[deg]:");
-    Serial.print(Ref);
-    Serial.print(", ");
+//    Serial.print("ref[deg]:");
+//    Serial.print(Ref);
+//    Serial.print(", ");
     Serial.print("ang[deg]");
     Serial.print(ang);
     Serial.print(", ");
-    Serial.print("Error:[rad]");
-    Serial.println(E);
+//    Serial.print("Error:[rad]");
+//    Serial.print(E);
 //    Serial.print(", ");
 //    Serial.print("Error2:[deg]");
 //    Serial.print(E2);
 //    Serial.print(", ");
-//    Serial.print("CmdPI:[?]");
+//    Serial.print("CmdPI:[%]");
 //    Serial.print(CmdPI);
 //    Serial.print(", ");
-//    Serial.print("CmdC:[?]");
-//    Serial.print(CmdC);
-//    Serial.print(", ");
-//    Serial.print("Cmd:[?]");
+    Serial.print("CmdC:[%]");
+    Serial.print(CmdC);
+    Serial.print(", ");
+//    Serial.print("Cmd:[%]");
 //    Serial.print(Cmd);
 //    Serial.print(", ");
-//    Serial.print("CmdLim:[?]");
+//    Serial.print("CmdLim:[%]");
 //    Serial.print(CmdLim);
 //    Serial.print(", ");
-//    Serial.print("pwmDuty:[8bit]");
-//    Serial.println(pwmDuty);
+    Serial.print("pwmDuty:[8bit]");
+    Serial.println(pwmDuty);
    }
 }
 
