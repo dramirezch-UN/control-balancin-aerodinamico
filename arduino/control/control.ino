@@ -11,7 +11,7 @@ bool up = true;
 int i = 0;
 
 long previousMillis = 0;
-double directCmd=0.5;
+double directCmd=0.3;
 int Uunits=1;
 int pwmMax=255;
 unsigned int pwmDuty = 0;
@@ -28,6 +28,8 @@ float Kd = 0.00323;*/
 float Kp=0.4;
 float Ki=0.65;
 float Kd=0.018;
+int N=100;
+double Ref= 90;
 
 //Red de adelanto
 double a=2.377;
@@ -49,12 +51,10 @@ double d2=-0.9993;
 
 //double c1=1.00;
 //double d1=-0.972268441486412;
-double Ref= 90;
 double Uin=0;
 double Uinp=0;
 double CmdPI=0.0;
 double Cmd=0.0;
-int N=100;
 long Ts=2.5;
 double E2=0;
 double E=0;
@@ -128,23 +128,35 @@ void controlPI(){
       Up = CmdC;
      
     }
-    //Serial.print("Time:");
-    //Serial.print(currentMillis);
-    //Serial.print(",");
-    //Serial.print("Error:");
-    //Serial.print(E2);
-    //Serial.print(",");
-    //Serial.print("U:");
-    //Serial.print(CmdPI);
-    //Serial.print(",");
-    //Serial.print("Ref:");
-    Serial.print(currentMillis/1000.0,DEC);
-    Serial.print(",");
-    Serial.print(Ref,DEC);
-    Serial.print(",");
-    //Serial.print("angle:");
-    Serial.println(ang,DEC);  
-   
+    Serial.print("Time[ms]:");
+    Serial.print(currentMillis);
+    Serial.print(", ");
+    Serial.print("ref[deg]:");
+    Serial.print(Ref);
+    Serial.print(", ");
+    Serial.print("ang[deg]");
+    Serial.print(ang);
+    Serial.print(", ");
+    Serial.print("Error:[rad]");
+    Serial.println(E);
+//    Serial.print(", ");
+//    Serial.print("Error2:[deg]");
+//    Serial.print(E2);
+//    Serial.print(", ");
+//    Serial.print("CmdPI:[?]");
+//    Serial.print(CmdPI);
+//    Serial.print(", ");
+//    Serial.print("CmdC:[?]");
+//    Serial.print(CmdC);
+//    Serial.print(", ");
+//    Serial.print("Cmd:[?]");
+//    Serial.print(Cmd);
+//    Serial.print(", ");
+//    Serial.print("CmdLim:[?]");
+//    Serial.print(CmdLim);
+//    Serial.print(", ");
+//    Serial.print("pwmDuty:[8bit]");
+//    Serial.println(pwmDuty);
    }
 }
 
