@@ -95,10 +95,10 @@ void controlPI(){
       CmdPI= CmdP+CmdI+CmdD;
       
 //      Si se quiere usar solo PID (sin red) descomentar la siguiente linea
-      CmdC=CmdPI;
+//      CmdC=CmdPI;
 
 //      Red de adelanto
-//      CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
+      CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
 //      Red de adelanto atraso
 //      CmdC=(a1*CmdPI+b1*CmdPIp+c1*CmdPIpp -e1*Up-f1*Upp)/d1;
 //      Red de atraso
