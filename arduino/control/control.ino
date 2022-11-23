@@ -3,7 +3,7 @@ int IN2 = 6;
 int sensorPin = A0;
 
 // ----- Referencia -----
-      double Ref= 105; 
+      double Ref= 100; 
 // ----------------------
 
 float Kp=0.5;
@@ -53,7 +53,7 @@ void controlPI(){
       double CmdI =(Ki*(Ts*1e-3)*Ep)+CmdIp;
       double CmdD = Kd*N*(E-Ep)+CmdDp*(1-(N*Ts*1e-3));
      
-      CmdPID= CmdP+CmdI+CmdD;
+      CmdPID= 1.46*(CmdP+CmdI+CmdD);
       
 //      Si se quiere usar solo PID (sin red) descomentar la siguiente linea y comentar la red de adelanto
 //      CmdC=CmdPID;
@@ -106,6 +106,8 @@ void setup(){
   double Ts1=1000;
   double T2=0.0130;
   double b1=55.62;
+  //double T2=0.;
+  //double b1=75.95;
   a=(Ts1*1e-3)+2*T2*b1;
   b=(Ts1*1e-3)-2*T2*b1;
   c=(Ts1*1e-3)+2*T2;

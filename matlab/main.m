@@ -8,3 +8,4 @@ parametros;
 % verificar_sistema;
 % figure("name", "TF")
 % verificar_TF;
+plot_test;

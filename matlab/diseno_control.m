@@ -1,24 +1,31 @@
-%controlSystemDesigner('bode' ,TF);
-z=tf('z');
-T=0.01;
-%control=(29.102*(s+275.7)*(s+2.216)*(s^2 + 2.772*s + 61.43))/(s*(s+254.2)*(s^2+41.33*s+814.8));
-%control=(1.4728 *(s+275.7)* (s+2.216)* (s^2 + 2.772*s + 61.43))/(s*(s+254.2)* (s^2 + 41.33*s + 814.8));
-%control=(1.1488 *(s+275.7)* (s+2.216)* (s^2 + 2.772*s + 61.43))/(s*(s+254.2)* (s^2 + 41.33*s + 814.8));
-control=(12.409 *(s+275.7)* (s+0.6775)* (s^2 + 2.772*s + 61.43))/(s* (s+254.2)* (s^2 + 41.33*s + 814.8));
-control_discreto=c2d(control,T,'tustin')
+%% Parametros Root Locust
+% solo modificar las siguientes 5 lineas
+sobrepico=10; % aka overshoot Mp [porcentaje]
+tiempoDeAsentamiento=10; % aka settling time ts [segundos]
+tiempoDeElevacion=0.5; % aka rise time tr [segundos]
+Kdc=0.006587;
+tao=0.001492;
 
-step(control, control_discreto,1)
-legend('control continuo', 'control discreto')
+% calculo de z y theta
+sobrepico = sobrepico / 100;
+zeta=abs((log(sobrepico))/(sqrt((log(sobrepico))^2 + pi^2)));
+theta=acosd(z);
 
-red_tf=(0.2613*s+1)/(0.006074*s+1);
-red_tf_discreta=c2d(red_tf, 0.0025, 'tustin');
+a = -4.5/tiempoDeAsentamiento;
 
-Ts=1000;
-T2=0.0207;
-b1=11.24;
-a=(Ts*1e-3)+2*T2*b1
-b=(Ts*1e-3)-2*T2*b1
-c=(Ts*1e-3)+2*T2
-d=(Ts*1e-3)-2*T2
+radio=1.8/tiempoDeElevacion;
+
+Kp=0.5;
+tf_para_rl=(Kdc)/(tao*s^2+(1+Kp*Kdc)*s);% ki variable kp constante
 
 
+rlocus(tf_para_rl)
+hold on
+sgrid(zeta, a);
+tsline=a+(-1.5e4:0.1:1.5e4)*1i;
+viscircles([0 0],radio)
+plot(tsline, '--r')
+hold off
+
+%% CSD
+%controlSystemDesigner(TF);
