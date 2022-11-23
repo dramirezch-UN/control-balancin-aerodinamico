@@ -10,4 +10,15 @@ control_discreto=c2d(control,T,'tustin')
 step(control, control_discreto,1)
 legend('control continuo', 'control discreto')
 
+red_tf=(0.2613*s+1)/(0.006074*s+1);
+red_tf_discreta=c2d(red_tf, 0.0025, 'tustin');
+
+Ts=1000;
+T2=0.0207;
+b1=11.24;
+a=(Ts*1e-3)+2*T2*b1
+b=(Ts*1e-3)-2*T2*b1
+c=(Ts*1e-3)+2*T2
+d=(Ts*1e-3)-2*T2
+
 

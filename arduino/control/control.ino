@@ -7,8 +7,6 @@ int sensorValue = 0;  // variable to store the value coming from the sensor
 double ang=0;
 
 long previousMillis2 = 0; // For auxiliary functions (squarewaves)
-bool up = true;
-int i = 0;
 
 long previousMillis = 0;
 double directCmd=30;
@@ -16,17 +14,17 @@ int Uunits=100;
 int pwmMax=255;
 unsigned int pwmDuty = 0;
 
-float Kp=0.537343719819551;
-float Ki=0.121465296518685;
-float Kd=-1.73291836724239;
-int N=0.177064533264986;
-double Ref= 30;
+float Kp=0.5;
+float Ki=0.7;
+float Kd=0.02;
+int N=100;
+double Ref= 100;
 
 //Red de adelanto
-double a=2.377;
-double b=-2.326;
-double c=1;
-double d=-0.9485;
+double a=1.4653;
+double b=0.5347;
+double c=1.0414;
+double d=0.9586;
 //Red de adelanto-atraso
 double a1 = 2.13;
 double b1 = -4.209;
@@ -97,10 +95,10 @@ void controlPI(){
       CmdPI= CmdP+CmdI+CmdD;
       
 //      Si se quiere usar solo PID (sin red) descomentar la siguiente linea
-//      CmdC=CmdPI;
+      CmdC=CmdPI;
 
 //      Red de adelanto
-      CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
+//      CmdC=(a*CmdPI+b*CmdPIp-d*Up)/c;
 //      Red de adelanto atraso
 //      CmdC=(a1*CmdPI+b1*CmdPIp+c1*CmdPIpp -e1*Up-f1*Upp)/d1;
 //      Red de atraso
