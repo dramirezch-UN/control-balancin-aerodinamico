@@ -3,7 +3,7 @@ int IN2 = 6;
 int sensorPin = A0;
 
 // ----- Referencia -----
-      double Ref= 100; 
+      double Ref= 105; 
 // ----------------------
 
 float Kp=0.5;
@@ -15,11 +15,11 @@ double directCmd=30;
 int Uunits=100;
 int pwmMax=255;
 long Ts=2.5;
-
-double a=1.4653;
-double b=0.5347;
-double c=1.0414;
-double d=0.9586;
+// valores de la red (calculados durante el setup)
+double a=0;
+double b=0;
+double c=0;
+double d=0;
 
 long previousMillis = 0;
 double CmdPID=0.0;
@@ -99,10 +99,17 @@ void controlPI(){
    }
 }
 
-void setup()
-{
- pinMode (IN2, OUTPUT);
- Serial.begin(115200);
+void setup(){
+  pinMode (IN2, OUTPUT);
+  Serial.begin(115200);
+ 
+  double Ts1=1000;
+  double T2=0.0130;
+  double b1=55.62;
+  a=(Ts1*1e-3)+2*T2*b1;
+  b=(Ts1*1e-3)-2*T2*b1;
+  c=(Ts1*1e-3)+2*T2;
+  d=(Ts1*1e-3)-2*T2;
 }
 
 void loop(){
